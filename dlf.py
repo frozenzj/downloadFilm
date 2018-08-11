@@ -42,10 +42,13 @@ def crawfilm_htm(mode,step_start=None,step_end=None):
             r=requests.get(h,headers=heads,allow_redirects=False)
             if r.status_code==200:
 #                r.encoding='utf-8'
-                l=crawfilm_list(r.content)
-                l.insert(0,i)
+                try:
+                    l=crawfilm_list(r.content)
+                    l.insert(0,i)
 #                print(i)
-                final_l.append(l)
+                    final_l.append(l)
+                except:
+                    print('status:%s,page:%s'%(str(r.status_code),str(i)))
             elif r.status_code==301 or 404:
                 templ=[i]
                 templ.extend(empl)
