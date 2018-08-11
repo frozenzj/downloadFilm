@@ -40,17 +40,19 @@ def crawfilm_htm(mode,step_start=None,step_end=None):
         for i in range(step_start,step_end):
             h='http://www.juduoba.com/show/%s.html'%(str(i))
             r=requests.get(h,headers=heads,allow_redirects=False)
-            if r.status_code==301:
-                templ=[i]
-                templ.extend(empl)
-                final_l.append(templ)
-                continue
-            else:
+            if r.status_code==200:
 #                r.encoding='utf-8'
                 l=crawfilm_list(r.content)
                 l.insert(0,i)
 #                print(i)
                 final_l.append(l)
+            elif r.status_code==301 or 404:
+                templ=[i]
+                templ.extend(empl)
+                final_l.append(templ)
+#                continue
+            else:
+                print(i)
         return final_l
 
 def crawfilm_list(responseC):
