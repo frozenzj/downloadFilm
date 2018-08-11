@@ -55,7 +55,8 @@ def crawfilm_htm(mode,step_start=None,step_end=None):
                 final_l.append(templ)
 #                continue
             else:
-                print(i)
+                print('status:%s,page:%s'%(str(r.status_code),str(i)))
+#                print(i)
         return final_l
 
 def crawfilm_list(responseC):
