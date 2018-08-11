@@ -25,6 +25,10 @@
 def crawfilm_htm(mode,step_start=None,step_end=None):
     import requests
     heads={'User-Agent':'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:61.0) Gecko/20100101 Firefox/61.0'}
+    empi=0
+    empl=[]
+    for empi in range(10):
+        empl.append('empty')
     if mode=='test':
         h='http://www.juduoba.com/show/1.html'
         r=requests.get(h,headers=heads)
@@ -37,9 +41,12 @@ def crawfilm_htm(mode,step_start=None,step_end=None):
             h='http://www.juduoba.com/show/%s.html'%(str(i))
             r=requests.get(h,headers=heads,allow_redirects=False)
             if r.status_code==301:
-                break
+                templ=[i]
+                templ.extend(empl)
+                final_l.append(templ)
+                continue
             else:
-                r.encoding='utf-8'
+#                r.encoding='utf-8'
                 l=crawfilm_list(r.content)
                 l.insert(0,i)
 #                print(i)
