@@ -46,3 +46,30 @@ def re_dl_link(url):
         print('%s is downloaded,thx for using!'%(i))
     except:
         print('step 3 failed!')
+
+def ts_dl(url):
+    import requests
+    from urllib import parse as pa
+    import re
+    from lxml import etree
+    rule_u=r'%u([0-9A-Fa-f]{4})'
+    rule_c=r'm3u8#.?(\d{2}).?'
+    d={}
+    #1,requests m3u8 link
+    r1=requests.get(url)
+    e1=etree.HTML(r1.content)
+    x1=e1.xpath('//div/script/text()')
+    str1=x1[1][28:-2]
+    str1=pa.unquote(str1)
+    str2=re.sub(rule_u,lambda m:chr(int(m.group(1),base=16)),str1)
+    #test output m3u8 list
+    #return str2
+    str3=re.sub(rule_c,lambda m:m.group(1),str2)
+    l1=str3.split('$')
+    for i in range(len(l1)):
+        if l1[i]=='云播在线':
+            l2=l1[i+3:-1]
+            l2.insert(0,'01')
+    for i in range(0,len(l2),2):
+        d[l2[i]]=l2[i+1]
+    return(d)
