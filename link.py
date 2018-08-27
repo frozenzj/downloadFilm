@@ -47,7 +47,7 @@ def re_dl_link(url):
     except:
         print('step 3 failed!')
 
-def ts_dl(url):
+def ts_dl(url,num=1):
     import requests
     from urllib import parse as pa
     import re
