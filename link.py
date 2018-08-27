@@ -49,34 +49,49 @@ def re_dl_link(url):
 
 def ts_dl(url,num=1):
     import requests
+    from lxml import etree
     from urllib import parse as pa
     import re
-    from lxml import etree
     #1,requests find m3u8 requests link
+    d1={}
     rule_u=r'%u([0-9A-Fa-f]{4})'
-    rule_c=r'm3u8#.?(\d{2}).?'
-    d={}
-    #1,requests m3u8 link
+    rule_c=r'(m3u8#.{1}|iqiyi#.{1})(\d{2}).{1}'
     r1=requests.get(url)
     e1=etree.HTML(r1.content)
     x1=e1.xpath('//div/script/text()')
     str1=x1[1][28:-2]
     str1=pa.unquote(str1)
     str2=re.sub(rule_u,lambda m:chr(int(m.group(1),base=16)),str1)
-    #test output m3u8 list
-    #return str2
-    str3=re.sub(rule_c,lambda m:m.group(1),str2)
+    str3=re.sub(rule_c,lambda m:m.group(2),str2)
     l1=str3.split('$')
+#    print(l1)
     for i in range(len(l1)):
         if l1[i]=='云播在线':
             l2=l1[i+3:-1]
             l2.insert(0,'01')
     for i in range(0,len(l2),2):
-        d[l2[i]]=l2[i+1]
-    #return(d)
+        d1[l2[i]]=l2[i+1]
+#    return d1
     #2,requests m3u8 link
-    r2=requests.get(d1[str(num).zfill(2)])
-    print(r2.content)
+    mlink=d1[str(num).zfill(2)]
+    r2=requests.get(mlink)
+#    return mlink,r2.text
     #3,find #EXT-X-STREAM-INF,get real m3u8 link
+    mlink=mlink.rsplit('/',1)[0]
+    mlist1=r2.text
+    if '#EXTM3U' not in mlist1:
+        raise BaseException('not m3u8 link!!!')
+    if '#EXT-X-STREAM-INF' in mlist1:
+        mlist1=mlist1.splitlines()
+        for i in mlist1:
+            if '.m3u8' in i:
+                mlink_f=mlink+'/'+i
+    #            print(mlink_f)
+                r3=requests.get(mlink_f)
+                ts_text=r3.text
+    if '#EXTINF' in mlist1:
+        ts_text=mlist1
+
     #4,requests real m3u8 link,download ts file(check if key exist)
-    #5,merge all ts file into a MP4 file
+    return ts_text
+    #5,merge all ts file into a MP4 file  
