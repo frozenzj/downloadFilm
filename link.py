@@ -52,6 +52,7 @@ def ts_dl(url):
     from urllib import parse as pa
     import re
     from lxml import etree
+    #1,requests find m3u8 requests link
     rule_u=r'%u([0-9A-Fa-f]{4})'
     rule_c=r'm3u8#.?(\d{2}).?'
     d={}
@@ -72,4 +73,10 @@ def ts_dl(url):
             l2.insert(0,'01')
     for i in range(0,len(l2),2):
         d[l2[i]]=l2[i+1]
-    return(d)
+    #return(d)
+    #2,requests m3u8 link
+    r2=requests.get(d1[str(num).zfill(2)])
+    print(r2.content)
+    #3,find #EXT-X-STREAM-INF,get real m3u8 link
+    #4,requests real m3u8 link,download ts file(check if key exist)
+    #5,merge all ts file into a MP4 file
