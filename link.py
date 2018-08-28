@@ -108,11 +108,11 @@ def ts_dl(url,num=1):
 #    for i in range(len(tsl)):
     for i in range(10):
         tempr=requests.get(tsl[i])
-        with open(os.path.join('C:/Users/CFSS-FS/tsfile',tsn[i]),'ab') as f:
+        with open(os.path.join('D:/tsfile',tsn[i]),'ab') as f:
             f.write(tempr.content)
             f.flush()
     #5,merge all ts file into a MP4 file
     cmd='copy /b * new.tmp'
-    os.chdir('C:/Users/CFSS-FS/tsfile')
+    os.chdir('D:/tsfile')
     os.system(cmd)
     os.rename('new.tmp','第%s集.mp4'%(str(num)))
