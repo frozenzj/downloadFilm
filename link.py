@@ -52,8 +52,12 @@ def ts_dl(url,num=1):
     from lxml import etree
     from urllib import parse as pa
     import re
+    import os
+#    url='https://www.yunbtv.com/play/38577-1-38.html'
     #1,requests find m3u8 requests link
     d1={}
+    tsl=[]
+    tsn=[]
     rule_u=r'%u([0-9A-Fa-f]{4})'
     rule_c=r'(m3u8#.{1}|iqiyi#.{1})(\d{2}).{1}'
     r1=requests.get(url)
@@ -86,12 +90,29 @@ def ts_dl(url,num=1):
         for i in mlist1:
             if '.m3u8' in i:
                 mlink_f=mlink+'/'+i
-    #            print(mlink_f)
+#                print(mlink_f)
                 r3=requests.get(mlink_f)
+                mlink_sp=mlink_f.rsplit('/',1)[0]
                 ts_text=r3.text
     if '#EXTINF' in mlist1:
         ts_text=mlist1
 
     #4,requests real m3u8 link,download ts file(check if key exist)
-    return ts_text
-    #5,merge all ts file into a MP4 file  
+#    return ts_text
+    ts_text_s=ts_text.splitlines()
+    for i in ts_text_s:
+        if '.ts' in i:
+            tsl.append(mlink_sp+'/'+i)
+            tsn.append(i)
+#    return tsl
+#    for i in range(len(tsl)):
+    for i in range(10):
+        tempr=requests.get(tsl[i])
+        with open(os.path.join('C:/Users/CFSS-FS/tsfile',tsn[i]),'ab') as f:
+            f.write(tempr.content)
+            f.flush()
+    #5,merge all ts file into a MP4 file
+    cmd='copy /b * new.tmp'
+    os.chdir('C:/Users/CFSS-FS/tsfile')
+    os.system(cmd)
+    os.rename('new.tmp','第%s集.mp4'%(str(num)))
